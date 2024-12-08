@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileConverter_DAO {
-    public static File pdfToWord(String inputFilePath) throws IOException {
+    public File pdfToWord(File inputFile){
         return null;
     }
-    public static File wordToPdf(String inputFilePath) throws IOException {
+    public File wordToPdf(File inputFile){
         return null;
     }
 
