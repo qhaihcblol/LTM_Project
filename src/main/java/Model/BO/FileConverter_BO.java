@@ -3,28 +3,32 @@ package Model.BO;
 import Model.Bean.Task;
 import Model.DAO.FileConverter_DAO;
 
-import java.io.File;
-
 
 public class FileConverter_BO {
 
-    public File pdfToWord(File inputFile) {
-        FileConverter_DAO fileConverter_dao = new FileConverter_DAO();
-        return fileConverter_dao.pdfToWord(inputFile);
+    public static String pdfToWord(String inputFilePath) {
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return FileConverter_DAO.pdfToWord(inputFilePath);
     }
-    public File wordToPdf(File inputFile) {
-        FileConverter_DAO fileConverter_dao = new FileConverter_DAO();
-        return fileConverter_dao.wordToPdf(inputFile);
+    public static String wordToPdf(String inputFilePath){
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return FileConverter_DAO.wordToPdf(inputFilePath);
     }
 
-    public void addTask(Task task){
-        FileConverter_DAO fileConverter_dao = new FileConverter_DAO();
-        fileConverter_dao.addTask(task);
+    public static void addTask(Task task){
+        FileConverter_DAO.addTask(task);
     }
 
-    public void updateTask(Task task){
-        FileConverter_DAO fileConverter_dao = new FileConverter_DAO();
-        fileConverter_dao.updateTask(task);
+    public static void updateTask(Task task){
+        FileConverter_DAO.updateTask(task);
     }
 
 }

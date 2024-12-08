@@ -1,3 +1,4 @@
+<%@ page import="Model.Bean.TaskQueue" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="vi">
 <head>

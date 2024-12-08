@@ -5,15 +5,13 @@ import Model.Bean.Task;
 import java.io.*;
 
 public class FileConverter_DAO {
-    public File pdfToWord(File inputFile){
-        String downloadDir = "downloads";
-        return new File(downloadDir, "output.docx");
+    public static String pdfToWord(String inputFilePath) {
+        return "output.docx";
     }
-    public File wordToPdf(File inputFile){
-        String downloadDir = "downloads";
-        return new File(downloadDir, "output.pdf");
+    public static String wordToPdf(String inputFilePath){
+        return "output.pdf";
     }
-    public void addTask(Task task){
+    public static void addTask(Task task){
         Database database = Database.getInstance();
         String query = "INSERT INTO tasks (user_id, input_file_path, output_file_path, status) VALUES (?, ?, ?, ?)";
         try {
@@ -22,7 +20,7 @@ public class FileConverter_DAO {
             e.printStackTrace();
         }
     }
-    public void updateTask(Task task){
+    public static void updateTask(Task task){
         Database database = Database.getInstance();
         String query = "UPDATE tasks SET user_id = ?, input_file_path = ?, output_file_path = ?, status = ? WHERE id = ?";
         try {

@@ -16,7 +16,7 @@ public class Authentication_Servlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         if (session != null && session.getAttribute("LoggedIn") != null && (boolean) session.getAttribute("LoggedIn")) {
-            resp.sendRedirect("Convert.jsp");
+            resp.sendRedirect("Upload.jsp");
             return;
         }
         String action = req.getParameter("action");
@@ -37,7 +37,7 @@ public class Authentication_Servlet extends HttpServlet {
                 req.getSession().setAttribute("username", username);
                 req.getSession().setAttribute("userId", authenticationBO.getUserId(username));
                 req.getSession().setAttribute("LoggedIn", true);
-                resp.sendRedirect("Convert.jsp");
+                resp.sendRedirect("Upload.jsp");
             } else {
                 req.setAttribute("username", username);
                 req.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng");

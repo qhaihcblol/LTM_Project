@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.BO.FileConverter_BO;
+import Model.BO.TaskWorker;
 import Model.Bean.Task;
 import Model.Bean.TaskQueue;
 import jakarta.servlet.ServletException;
@@ -24,7 +25,6 @@ public class FileConverter_Servlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-        FileConverter_BO fileConverter_bo = new FileConverter_BO();
         if (action.equals("pdfToWord")) {
             List<File> uploadedFiles = getInputFile(req);
             if (uploadedFiles.isEmpty()) {
@@ -38,23 +38,28 @@ public class FileConverter_Servlet extends HttpServlet {
                 task.setOutputFilePath(null);
                 task.setStatus("PENDING");
                 TaskQueue.addTask(task);
-                fileConverter_bo.addTask(task);
+                FileConverter_BO.addTask(task);
             }
-
+//            TaskWorker taskWorker = new TaskWorker();
+//            Thread workerThread = new Thread(taskWorker);
+//            workerThread.start();
         }
     }
+
     public List<File> getInputFile(HttpServletRequest req) throws IOException, ServletException {
         List<File> uploadedFiles = new ArrayList<>();
+        String uploadDirPath = "uploads";
+        File uploadDirFile = new File(uploadDirPath);
+        if (!uploadDirFile.exists()) {
+            uploadDirFile.mkdirs();
+        }
+
+        // Lấy các phần tử file từ request
         Collection<Part> fileParts = req.getParts();
         for (Part part : fileParts) {
             if ("file".equals(part.getName()) && part.getSize() > 0) {
                 String fileName = getFileName(part);
-                String uploadDir = "uploads";
-                File uploadDirFile = new File(uploadDir);
-                if (!uploadDirFile.exists()) {
-                    uploadDirFile.mkdirs();
-                }
-                File uploadFile = new File(uploadDir, fileName);
+                File uploadFile = new File(uploadDirFile, fileName);
                 part.write(uploadFile.getAbsolutePath());
                 uploadedFiles.add(uploadFile);
                 System.out.println("File uploaded: " + fileName);
@@ -62,6 +67,7 @@ public class FileConverter_Servlet extends HttpServlet {
         }
         return uploadedFiles;
     }
+
     public String getFileName(Part part) {
         String contentDisposition = part.getHeader("Content-Disposition");
         for (String cd : contentDisposition.split(";")) {
@@ -71,6 +77,7 @@ public class FileConverter_Servlet extends HttpServlet {
         }
         return null;
     }
+
     public int getUserId(HttpServletRequest req) {
         return (int) req.getSession().getAttribute("userId");
     }
