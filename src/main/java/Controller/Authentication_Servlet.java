@@ -35,6 +35,7 @@ public class Authentication_Servlet extends HttpServlet {
             String password = req.getParameter("password");
             if (authenticationBO.checkLogin(username, password)) {
                 req.getSession().setAttribute("username", username);
+                req.getSession().setAttribute("userId", authenticationBO.getUserId(username));
                 req.getSession().setAttribute("LoggedIn", true);
                 resp.sendRedirect("Convert.jsp");
             } else {

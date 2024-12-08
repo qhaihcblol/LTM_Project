@@ -51,5 +51,16 @@ public class Authentication_DAO {
         }
         return false;
     }
-
+    public int getUserId(String username) {
+        Database database = Database.getInstance();
+        String query = "SELECT id FROM users WHERE username = ?";
+        try (ResultSet rs = database.executeQuery(query, username)) {
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

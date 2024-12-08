@@ -1,6 +1,8 @@
 package Controller;
 
 import Model.BO.FileConverter_BO;
+import Model.Bean.Task;
+import Model.Bean.TaskQueue;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,6 +29,16 @@ public class FileConverter_Servlet extends HttpServlet {
             List<File> uploadedFiles = getInputFile(req);
             if (uploadedFiles.isEmpty()) {
                 resp.getWriter().write("Không có file nào được tải lên.");
+            }
+            int userId = getUserId(req);
+            for (File uploadedFile : uploadedFiles) {
+                Task task = new Task();
+                task.setUserId(userId);
+                task.setInputFilePath(uploadedFile.getAbsolutePath());
+                task.setOutputFilePath(null);
+                task.setStatus("PENDING");
+                TaskQueue.addTask(task);
+                fileConverter_bo.addTask(task);
             }
 
         }
@@ -58,5 +70,8 @@ public class FileConverter_Servlet extends HttpServlet {
             }
         }
         return null;
+    }
+    public int getUserId(HttpServletRequest req) {
+        return (int) req.getSession().getAttribute("userId");
     }
 }

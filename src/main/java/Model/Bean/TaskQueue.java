@@ -14,4 +14,7 @@ public class TaskQueue {
     public static Task getNextTask() throws InterruptedException {
         return queue.take();
     }
+    public static int getQueueSize() {
+        return queue.size();
+    }
 }
