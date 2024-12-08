@@ -11,6 +11,9 @@ import jakarta.servlet.http.Part;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @MultipartConfig
 @WebServlet(name = "FileConverter_Servlet", value = "/FileConverter_Servlet")
@@ -21,34 +24,31 @@ public class FileConverter_Servlet extends HttpServlet {
         String action = req.getParameter("action");
         FileConverter_BO fileConverter_bo = new FileConverter_BO();
         if (action.equals("pdfToWord")) {
-            File uploadedFile = getInputFile(req);
-            if (uploadedFile != null) {
-                String fileName = uploadedFile.getName();
-                String filePath = uploadedFile.getAbsolutePath();
-                resp.getWriter().println("File uploaded successfully: " + fileName);
-                resp.getWriter().println("File is stored at: " + filePath);
-                File outputFile = fileConverter_bo.pdfToWord(uploadedFile);
-                if (outputFile != null) {
-                    resp.getWriter().println("File converted successfully: " + outputFile.getName());
-                    resp.getWriter().println("File is stored at: " + outputFile.getAbsolutePath());
-                } else {
-                    resp.getWriter().println("File conversion failed.");
-                }
-            } else {
-                resp.getWriter().println("No file uploaded.");
+            List<File> uploadedFiles = getInputFile(req);
+            if (uploadedFiles.isEmpty()) {
+                resp.getWriter().write("Không có file nào được tải lên.");
             }
+
         }
     }
-    public File getInputFile(HttpServletRequest req) throws IOException, ServletException {
-        Part filePart = req.getPart("file");
-        if (filePart != null) {
-            String fileName = getFileName(filePart);
-            String uploadDir = "uploads";
-            File uploadFile = new File(uploadDir, fileName);
-            filePart.write(uploadFile.getAbsolutePath());
-            return uploadFile;
+    public List<File> getInputFile(HttpServletRequest req) throws IOException, ServletException {
+        List<File> uploadedFiles = new ArrayList<>();
+        Collection<Part> fileParts = req.getParts();
+        for (Part part : fileParts) {
+            if ("file".equals(part.getName()) && part.getSize() > 0) {
+                String fileName = getFileName(part);
+                String uploadDir = "uploads";
+                File uploadDirFile = new File(uploadDir);
+                if (!uploadDirFile.exists()) {
+                    uploadDirFile.mkdirs();
+                }
+                File uploadFile = new File(uploadDir, fileName);
+                part.write(uploadFile.getAbsolutePath());
+                uploadedFiles.add(uploadFile);
+                System.out.println("File uploaded: " + fileName);
+            }
         }
-        return null;
+        return uploadedFiles;
     }
     public String getFileName(Part part) {
         String contentDisposition = part.getHeader("Content-Disposition");

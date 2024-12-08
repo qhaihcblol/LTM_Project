@@ -47,8 +47,8 @@
     <h1>Chuyển đổi PDF sang Word</h1>
     <form action="FileConverter_Servlet?action=pdfToWord" method="post" enctype="multipart/form-data">
         <div class="file-input">
-            <label for="file">Chọn tệp PDF:</label>
-            <input type="file" id="file" name="file" accept="application/pdf" required>
+            <label for="file">Chọn tệp PDF (nhiều tệp được phép):</label>
+            <input type="file" id="file" name="file" accept="application/pdf" multiple required>
         </div>
         <button type="submit">Chuyển đổi</button>
     </form>

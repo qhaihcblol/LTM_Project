@@ -1,7 +1,6 @@
 package Model.DAO;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class FileConverter_DAO {
     public File pdfToWord(File inputFile){
@@ -11,7 +10,4 @@ public class FileConverter_DAO {
         return null;
     }
 
-    public static void main(String[] args) {
-
-    }
 }
