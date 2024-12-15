@@ -40,21 +40,20 @@ public class FileConverter_Servlet extends HttpServlet {
                 TaskQueue.addTask(task);
                 FileConverter_BO.addTask(task);
             }
-//            TaskWorker taskWorker = new TaskWorker();
-//            Thread workerThread = new Thread(taskWorker);
-//            workerThread.start();
+            req.setAttribute("ListFile", uploadedFiles);
+            req.getRequestDispatcher("Download.jsp").forward(req, resp);
         }
     }
 
     public List<File> getInputFile(HttpServletRequest req) throws IOException, ServletException {
         List<File> uploadedFiles = new ArrayList<>();
-        String uploadDirPath = "uploads";
+        String uploadDirPath = getServletContext().getRealPath("/uploads");
         File uploadDirFile = new File(uploadDirPath);
+
         if (!uploadDirFile.exists()) {
             uploadDirFile.mkdirs();
         }
 
-        // Lấy các phần tử file từ request
         Collection<Part> fileParts = req.getParts();
         for (Part part : fileParts) {
             if ("file".equals(part.getName()) && part.getSize() > 0) {
@@ -67,6 +66,7 @@ public class FileConverter_Servlet extends HttpServlet {
         }
         return uploadedFiles;
     }
+
 
     public String getFileName(Part part) {
         String contentDisposition = part.getHeader("Content-Disposition");

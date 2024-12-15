@@ -1,85 +1,9 @@
-/* Reset một số thuộc tính cơ bản */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Thiết lập font chữ chung */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f7fc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-.container {
+    /* Style cho phần giữa trang */
+.main-content {
     text-align: center;
-    background-color: white;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
+    margin-top: 50px;
 }
-
-.header h1 {
-    font-size: 32px;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.header p {
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 30px;
-}
-
-.actions {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.btn {
-    padding: 15px 30px;
-    font-size: 16px;
-    text-decoration: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    display: inline-block;
-}
-
-.btn:hover {
-    background-color: #0056b3;
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 20px;
-        width: 90%;
-    }
-
-    .header h1 {
-        font-size: 24px;
-    }
-
-    .header p {
-        font-size: 14px;
-    }
-
-    .btn {
-        width: 100%;
-        font-size: 14px;
-    }
-
-    .actions {
-        flex-direction: column;
-        gap: 10px;
-    }
+.main-content img {
+    max-width: 80%;
+    height: auto;
 }

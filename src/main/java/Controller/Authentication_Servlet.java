@@ -14,15 +14,27 @@ import java.io.IOException;
 public class Authentication_Servlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
-        if (session != null && session.getAttribute("LoggedIn") != null && (boolean) session.getAttribute("LoggedIn")) {
-            resp.sendRedirect("Upload.jsp");
+        String action = req.getParameter("action");
+
+        if ("Logout".equals(action)) {
+            if (req.getSession(false) != null) {
+                req.getSession().invalidate(); // Hủy phiên
+            }
+            resp.sendRedirect("index.jsp"); // Chuyển hướng về trang index.jsp
             return;
         }
-        String action = req.getParameter("action");
-        if ("Logout".equals(action)) {
-            req.getSession().invalidate();
-            resp.sendRedirect("index.jsp");
+
+        if ("Login".equals(action)) {
+            resp.sendRedirect("Login.jsp");
+        } else if ("Register".equals(action)) {
+            resp.sendRedirect("Register.jsp");
+        } else {
+            HttpSession session = req.getSession(false);
+            if (session != null && session.getAttribute("LoggedIn") != null && (boolean) session.getAttribute("LoggedIn")) {
+                resp.sendRedirect("Upload.jsp");
+            } else {
+                resp.sendRedirect("index.jsp"); // Nếu không có phiên hợp lệ, quay lại index.jsp
+            }
         }
     }
     @Override
@@ -30,7 +42,7 @@ public class Authentication_Servlet extends HttpServlet {
         Authentication_BO authenticationBO = new Authentication_BO();
         String action = req.getParameter("action");
 
-        if(action.equals("Login")){
+        if (action.equals("Login")) {
             String username = req.getParameter("username");
             String password = req.getParameter("password");
             if (authenticationBO.checkLogin(username, password)) {
@@ -44,23 +56,23 @@ public class Authentication_Servlet extends HttpServlet {
                 req.getRequestDispatcher("Login.jsp").forward(req, resp);
             }
 
-        } else if(action.equals("Register")){
+        } else if (action.equals("Register")) {
             String username = req.getParameter("username");
             String password = req.getParameter("password");
             String confirmPassword = req.getParameter("confirmPassword");
             String email = req.getParameter("email");
 
-            if(!authenticationBO.isPasswordMatching(password,confirmPassword)){
+            if (!authenticationBO.isPasswordMatching(password, confirmPassword)) {
                 req.setAttribute("username", username);
                 req.setAttribute("email", email);
                 req.setAttribute("error", "Mật khẩu không khớp");
                 req.getRequestDispatcher("Register.jsp").forward(req, resp);
-            } else if(authenticationBO.isExistUser(username)){
+            } else if (authenticationBO.isExistUser(username)) {
                 req.setAttribute("username", username);
                 req.setAttribute("email", email);
                 req.setAttribute("error", "Tên đăng nhập đã tồn tại");
                 req.getRequestDispatcher("Register.jsp").forward(req, resp);
-            } else if(authenticationBO.isExistEmail(email)){
+            } else if (authenticationBO.isExistEmail(email)) {
                 req.setAttribute("username", username);
                 req.setAttribute("email", email);
                 req.setAttribute("error", "Email đã tồn tại");
