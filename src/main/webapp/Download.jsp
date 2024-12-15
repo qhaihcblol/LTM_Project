@@ -5,21 +5,16 @@
 <head>
     <title>Download Files</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
         .file-list {
             list-style-type: none;
             padding: 0;
         }
         .file-item {
-            margin: 10px 0;
+            margin: 5px 0;
         }
         .file-link {
             text-decoration: none;
-            color: #4CAF50;
-            font-size: 18px;
+            color: blue;
         }
         .file-link:hover {
             text-decoration: underline;
@@ -29,18 +24,18 @@
 <body>
 <h2>Danh sách các file đã tải lên</h2>
 <%
-    List<File> fileList = (List<File>) request.getAttribute("ListFile");
+    List<String> fileList = (List<String>) request.getAttribute("successfulFiles");
     if (fileList != null && !fileList.isEmpty()) {
 %>
 <ul class="file-list">
     <%
-        for (File file : fileList) {
+        for (String filePath : fileList) {
+            File file = new File(filePath); // Tạo đối tượng File để lấy tên file
             String fileName = file.getName();
-            String filePath = file.getAbsolutePath();
-            System.out.println("File path: " + filePath);
+            String relativePath = "uploads/" + fileName; // Đường dẫn tương đối tới thư mục lưu trữ
     %>
     <li class="file-item">
-        <a href="<%= filePath %>" class="file-link" download="<%= fileName %>">
+        <a href="<%=relativePath%>" class="file-link" download="<%= fileName %>">
             <%= fileName %>
         </a>
     </li>

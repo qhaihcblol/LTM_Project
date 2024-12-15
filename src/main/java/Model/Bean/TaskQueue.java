@@ -2,6 +2,7 @@ package Model.Bean;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 
 public class TaskQueue {
@@ -12,8 +13,9 @@ public class TaskQueue {
     }
 
     public static Task getNextTask() throws InterruptedException {
-        return queue.take();
+        return queue.poll(5, TimeUnit.SECONDS);
     }
+
     public static int getQueueSize() {
         return queue.size();
     }

@@ -25,11 +25,13 @@ public class FileConverter_Servlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-        if (action.equals("pdfToWord")) {
+        if ("pdfToWord".equals(action)) {
             List<File> uploadedFiles = getInputFile(req);
             if (uploadedFiles.isEmpty()) {
                 resp.getWriter().write("Không có file nào được tải lên.");
+                return;
             }
+
             int userId = getUserId(req);
             for (File uploadedFile : uploadedFiles) {
                 Task task = new Task();
@@ -40,16 +42,30 @@ public class FileConverter_Servlet extends HttpServlet {
                 TaskQueue.addTask(task);
                 FileConverter_BO.addTask(task);
             }
-            req.setAttribute("ListFile", uploadedFiles);
-            req.getRequestDispatcher("Download.jsp").forward(req, resp);
+
+            // Khởi chạy worker để xử lý tác vụ
+            TaskWorker taskWorker = new TaskWorker();
+            Thread thread = new Thread(taskWorker);
+            thread.start();
+
+            try {
+                // Chờ thread kết thúc
+                thread.join();
+
+                // Lấy danh sách file đã chuyển đổi thành công
+                List<String> successfulFiles = taskWorker.getSuccessfulFiles();
+                req.setAttribute("successfulFiles", successfulFiles);
+                req.getRequestDispatcher("Download.jsp").forward(req, resp);
+            } catch (InterruptedException e) {
+                throw new ServletException("Error while waiting for task completion.", e);
+            }
         }
     }
 
     public List<File> getInputFile(HttpServletRequest req) throws IOException, ServletException {
         List<File> uploadedFiles = new ArrayList<>();
-        String uploadDirPath = getServletContext().getRealPath("/uploads");
+        String uploadDirPath = "D:/Nam 3 HK1/Cong nghe Web/Code/LTM_Project/src/main/webapp/uploads";
         File uploadDirFile = new File(uploadDirPath);
-
         if (!uploadDirFile.exists()) {
             uploadDirFile.mkdirs();
         }
@@ -66,7 +82,6 @@ public class FileConverter_Servlet extends HttpServlet {
         }
         return uploadedFiles;
     }
-
 
     public String getFileName(Part part) {
         String contentDisposition = part.getHeader("Content-Disposition");

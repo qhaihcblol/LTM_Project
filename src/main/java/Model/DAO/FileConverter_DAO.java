@@ -6,14 +6,8 @@ import java.sql.ResultSet;
 
 public class FileConverter_DAO {
     public static String pdfToWord(String inputFilePath) {
-
-        return "output.docx";
+        return FileConversionUtils.pdfToWord(inputFilePath);
     }
-
-    public static String wordToPdf(String inputFilePath) {
-        return "output.pdf";
-    }
-
     public static void addTask(Task task) {
         Database database = Database.getInstance();
         String query = "INSERT INTO tasks (user_id, input_file_path, output_file_path, status) VALUES (?, ?, ?, ?)";
