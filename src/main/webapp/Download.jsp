@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.io.File" %>
 <%@ page import="java.util.List" %>
+<%@ include file="Header.jsp" %>
 <html>
 <head>
     <title>Download Files</title>

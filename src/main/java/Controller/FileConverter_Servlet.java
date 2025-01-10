@@ -3,7 +3,6 @@ package Controller;
 import Model.BO.FileConverter_BO;
 import Model.BO.TaskWorker;
 import Model.Bean.Task;
-import Model.Bean.TaskQueue;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -33,38 +32,29 @@ public class FileConverter_Servlet extends HttpServlet {
             }
 
             int userId = getUserId(req);
+            List<Task> tasks = new ArrayList<>();
             for (File uploadedFile : uploadedFiles) {
                 Task task = new Task();
                 task.setUserId(userId);
                 task.setInputFilePath(uploadedFile.getAbsolutePath());
                 task.setOutputFilePath(null);
                 task.setStatus("PENDING");
-                TaskQueue.addTask(task);
                 FileConverter_BO.addTask(task);
+                tasks.add(task);
             }
 
-            // Khởi chạy worker để xử lý tác vụ
-            TaskWorker taskWorker = new TaskWorker();
-            Thread thread = new Thread(taskWorker);
-            thread.start();
+            // Khởi chạy worker (nếu chưa chạy)
+            TaskWorker.startWorker();
 
-            try {
-                // Chờ thread kết thúc
-                thread.join();
-
-                // Lấy danh sách file đã chuyển đổi thành công
-                List<String> successfulFiles = taskWorker.getSuccessfulFiles();
-                req.setAttribute("successfulFiles", successfulFiles);
-                req.getRequestDispatcher("Download.jsp").forward(req, resp);
-            } catch (InterruptedException e) {
-                throw new ServletException("Error while waiting for task completion.", e);
-            }
+            // Chuyển hướng đến trang Upload.jsp và truyền danh sách task
+            req.setAttribute("tasks", tasks);
+            req.getRequestDispatcher("Upload.jsp").forward(req, resp);
         }
     }
 
     public List<File> getInputFile(HttpServletRequest req) throws IOException, ServletException {
         List<File> uploadedFiles = new ArrayList<>();
-        String uploadDirPath = "D:/Nam 3 HK1/Cong nghe Web/Code/LTM_Project/src/main/webapp/uploads";
+        String uploadDirPath = req.getServletContext().getRealPath("/uploads");
         File uploadDirFile = new File(uploadDirPath);
         if (!uploadDirFile.exists()) {
             uploadDirFile.mkdirs();
@@ -74,10 +64,23 @@ public class FileConverter_Servlet extends HttpServlet {
         for (Part part : fileParts) {
             if ("file".equals(part.getName()) && part.getSize() > 0) {
                 String fileName = getFileName(part);
-                File uploadFile = new File(uploadDirFile, fileName);
+                String baseName = fileName.replaceFirst("[.][^.]+$", ""); // Tên file không có đuôi
+                String extension = fileName.substring(fileName.lastIndexOf(".")); // Đuôi file
+
+                int fileIndex = 0;
+                String uniqueFileName = fileName;
+                File uploadFile = new File(uploadDirFile, uniqueFileName);
+
+                // Kiểm tra trùng lặp và thêm số thứ tự vào tên file
+                while (uploadFile.exists()) {
+                    fileIndex++;
+                    uniqueFileName = baseName + "(" + fileIndex + ")" + extension;
+                    uploadFile = new File(uploadDirFile, uniqueFileName);
+                }
+
                 part.write(uploadFile.getAbsolutePath());
                 uploadedFiles.add(uploadFile);
-                System.out.println("File uploaded: " + fileName);
+                System.out.println("File uploaded: " + uniqueFileName);
             }
         }
         return uploadedFiles;

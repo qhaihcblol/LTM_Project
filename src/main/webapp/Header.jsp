@@ -3,6 +3,13 @@
 <head>
     <title>PDF Converter</title>
     <link rel="stylesheet" href="CSS_File/Header.css">
+    <style type="text/css">
+    .username {
+    font-size: 20px; 
+    margin-right: 5px;
+    font-weight: bold;
+}
+    </style>
 </head>
 <body>
 <div class="header">
@@ -19,9 +26,9 @@
         <%
         } else {
         %>
-        <span>Welcome, <%= username %></span>
+        <span class="username">Welcome, <%= username %></span>
         <a href="Authentication_Servlet?action=Logout">Logout</a>
-        <a href="Authentication_Servlet?action=Download">History</a>
+        <a href="History.jsp">History</a>
         <%
             }
         %>
